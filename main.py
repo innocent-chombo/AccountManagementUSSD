@@ -5,29 +5,54 @@ app = Flask(__name__)
 response = ""
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/ussd/am', methods=['POST', 'GET'])
 def ussd_callback():
     global response
-    session_id = request.values.get("sessionId", None)
-    service_code = request.values.get("serviceCode", None)
-    phone_number = request.values.get("phoneNumber", None)
-    text = request.values.get("text", "default")
+    
+    if request.method == 'GET':
+        try:
+            session_id = request.args['sessionId']
+            service_code = request.args['serviceCode']
+            phone_number = request.args['phoneNumber']
+            text = request.args['text']
+        except KeyError:
+            return '''
+                Welcome to the USSD testing interface
+                Send POST requests with the following parameters:
+                - sessionId
+                - serviceCode
+                - phoneNumber
+                - text
+            '''
+    else:
+        # Handle JSON POST data
+        if not request.is_json:
+            return "Content-Type must be application/json", 400
+            
+        data = request.json
+        try:
+            session_id = data['sessionId']
+            service_code = data['serviceCode']
+            phone_number = data['phoneNumber']
+            text = data.get('text', '')  # text is optional
+        except KeyError:
+            return "Missing required parameters in JSON body", 400
 
     if text == '':
         response = '''
-            CON What would you want to check
-            1. My Account
-            2. My phone number
+            CON What would you want to check\n
+            1. My Account\n
+            2. My phone number\n
         '''
     elif text == '1':
         response = '''
-            CON Choose account information you want to view
-            1. Account number
-            2. Account balance
+            CON Choose account information you want to view\n
+            1. Account number\n
+            2. Account balance\n
         '''
     elif text == '1*1':
-        accountNumber = "ACC10001"
-        response = "END Your account number is " + accountNumber
+        account_number = "ACC10001"
+        response = "END Your account number is " + account_number
     elif text == "1*2":
         balance = "MWK 10,000"
         response = "END Your balance is " + balance
@@ -38,4 +63,4 @@ def ussd_callback():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5000")
+    app.run(host="0.0.0.0", port=5000)
