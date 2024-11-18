@@ -29,14 +29,23 @@ def ussd_callback():
         if not request.is_json:
             return "Content-Type must be application/json", 400
             
-        data = request.json
         try:
-            session_id = data['sessionId']
-            service_code = data['serviceCode']
-            phone_number = data['phoneNumber']
-            text = data.get('text', '')  # text is optional
-        except KeyError:
-            return "Missing required parameters in JSON body", 400
+            data = request.get_json()
+            if data is None:
+                session_id = ''
+                service_code = ''
+                phone_number = ''
+                text = ''
+            else:
+                session_id = data.get('sessionId', '')
+                service_code = data.get('serviceCode', '')
+                phone_number = data.get('phoneNumber', '')
+                text = data.get('text', '')
+        except Exception:
+            session_id = ''
+            service_code = ''
+            phone_number = ''
+            text = ''
 
     if text == '':
         response = '''
