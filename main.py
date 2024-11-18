@@ -25,23 +25,13 @@ def ussd_callback():
                 - text
             '''
     else:
-        # Handle JSON POST data
-        print(request)
-        # if not request.is_json:
-        #     return "Content-Type must be application/json", 400
-            
+        # Handle POST Request
         try:
-            data = request.get_json()
-            if data is None:
-                session_id = ''
-                service_code = ''
-                phone_number = ''
-                text = ''
-            else:
-                session_id = data.get('sessionId', '')
-                service_code = data.get('serviceCode', '')
-                phone_number = data.get('phoneNumber', '')
-                text = data.get('text', '')
+            # Read the variables sent via POST from our API
+            session_id = request.values.get("sessionId", None)
+            service_code = request.values.get("serviceCode", None)
+            phone_number = request.values.get("phoneNumber", None)
+            text = request.values.get("text", "default")
         except Exception:
             session_id = ''
             service_code = ''
