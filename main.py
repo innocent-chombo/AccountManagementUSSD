@@ -26,8 +26,9 @@ def ussd_callback():
             '''
     else:
         # Handle JSON POST data
-        if not request.is_json:
-            return "Content-Type must be application/json", 400
+        print(request)
+        # if not request.is_json:
+        #     return "Content-Type must be application/json", 400
             
         try:
             data = request.get_json()
