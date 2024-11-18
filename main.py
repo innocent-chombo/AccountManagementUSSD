@@ -17,7 +17,7 @@ def ussd_callback():
             text = request.args['text']
         except KeyError:
             return '''
-                Welcome to the USSD testing interface
+                CON Welcome to the USSD testing interface
                 Send POST requests with the following parameters:
                 - sessionId
                 - serviceCode
